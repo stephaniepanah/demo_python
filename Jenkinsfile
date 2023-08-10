@@ -105,7 +105,7 @@ def buildImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword
         def dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH_mm_ss")
         def date = new Date()
         def buildDate = (dateFormat.format(date)) 
-        sh("docker build -t ${NexusUrl}:8082/${NexusRegistry}/${RepositoryName}:${BUILD_ID}    .")
+        sh("docker build -o output -t ${NexusUrl}:8082/${NexusRegistry}/${RepositoryName}:${BUILD_ID}    .")
 }
 
 def scanImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword) {
