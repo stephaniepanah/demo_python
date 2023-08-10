@@ -24,7 +24,7 @@ properties(
 def RepositoryName = 'python-demo'
 def NexusUrl = "192.168.1.159"
 def NexusRegistry = "demo"
- def credentials = com.cloudbees.plugins.credentials.CredentialsProvider.lookupCredentials(
+def credentials = com.cloudbees.plugins.credentials.CredentialsProvider.lookupCredentials(
                    com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials.class,
                    jenkins.model.Jenkins.instance
                   )
@@ -105,7 +105,7 @@ def buildImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword
         def dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH_mm_ss")
         def date = new Date()
         def buildDate = (dateFormat.format(date)) 
-        sh("docker build -t ${NexusUrl}:8082/${NexusRegistry}/${RepositoryName}:${BUILD_ID}    .")
+        sh("docker build -t ${NexusUrl}:8082/${NexusRegistry}/${RepositoryName}:1.0.${BUILD_ID}    .")
 }
 
 def scanImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword) {
@@ -117,7 +117,7 @@ def scanImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword)
         env.NexusRegistry = "${NexusRegistry}"
         sh label: '', script: '''#!/usr/bin/env bash
                                  export DOCKER_HOST=unix:///Users/gauravkothiyal/.docker/run/docker.sock 
-                                 trivy image   --dependency-tree   -s MEDIUM,HIGH,CRITICAL  --ignore-unfixed --exit-code 0   --format template --template "@html.tpl" -o report.html \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${BUILD_ID}'''
+                                 trivy image   --dependency-tree   -s MEDIUM,HIGH,CRITICAL  --ignore-unfixed --exit-code 0   --format template --template "@html.tpl" -o report.html \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:1.0.\${BUILD_ID}'''
 }
 
 def pushImages(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword) {
@@ -130,6 +130,6 @@ def pushImages(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword
         sh label: '', script: '''#!/usr/bin/env bash
 set -x
                                  docker login -u \${NexusUser} -p \${NexusPassword} \${NexusUrl}:8082
-                                 docker push \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${BUILD_ID}
-                                 docker rmi \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${BUILD_ID}'''
+                                 docker push \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:1.0.\${BUILD_ID}
+                                 docker rmi \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:1.0.\${BUILD_ID}'''
     }
