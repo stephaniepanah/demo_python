@@ -42,13 +42,6 @@ node ('macOS')  {
                          checkout scm
                        }
 
-                   stage('SonarQube Analysis') {
-                       def scannerHome = tool 'sonar';
-                       withSonarQubeEnv('sonar') {
-                           sh "${scannerHome}/bin/sonar-scanner"
-                          }
-                        }  
-
                    stage('Build docker image and run tests') {
                        this.buildImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword)
                         }
@@ -57,8 +50,11 @@ node ('macOS')  {
                        this.scanImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword)
                         }
 
-                   stage('Scan docker image') {
-                     sh "trivy image ${NexusUrl}:8082/${NexusRegistry}/${RepositoryName}:${imageVersion}"
+                   stage('SonarQube Analysis') {
+                       def scannerHome = tool 'sonar';
+                       withSonarQubeEnv('sonar') {
+                           sh "${scannerHome}/bin/sonar-scanner"
+                          }
                         }
 
                    stage('Push docker image') {
@@ -111,7 +107,6 @@ def buildImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword
         def dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH_mm_ss")
         def date = new Date()
         def buildDate = (dateFormat.format(date)) 
-//   sh("docker build -t ${NexusUrl}:8082/${NexusRegistry}/${RepositoryName}:${imageVersion} .")
         sh("docker build -t ${NexusUrl}:8082/${NexusRegistry}/${RepositoryName}:${imageVersion} .")
 }
 
