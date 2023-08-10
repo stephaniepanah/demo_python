@@ -62,7 +62,7 @@ node ('macOS')  {
                         }
 
                    stage('Publish reports') {
-                       publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, includes: '**/*.html,**/*.css', keepAll: true, reportDir: 'output/app/', reportFiles: 'index.html,report.html', reportName: 'Scan report', reportTitles: '', useWrapperFileDirectly: true])
+                       publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, includes: 'report.html', keepAll: true, reportDir: '.', reportFiles: 'report.html', reportName: 'Trivy Scans', reportTitles: '', useWrapperFileDirectly: true])
 
 }
 
@@ -106,7 +106,6 @@ def buildImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword
         def date = new Date()
         def buildDate = (dateFormat.format(date)) 
         sh("docker build -t ${NexusUrl}:8082/${NexusRegistry}/${RepositoryName}:${BUILD_ID}    .")
-        sh("docker build -o output -t ${NexusUrl}:8082/${NexusRegistry}/${RepositoryName}:${BUILD_ID}    .")
 }
 
 def scanImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword) {
@@ -119,7 +118,7 @@ def scanImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword)
         env.NexusRegistry = "${NexusRegistry}"
         sh label: '', script: '''#!/usr/bin/env bash
                                  export DOCKER_HOST=unix:///Users/gauravkothiyal/.docker/run/docker.sock 
-                                 trivy image --format template --template "@html.tpl" -o output/app/report.html \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${BUILD_ID}'''
+                                 trivy image --format template --template "@html.tpl" report.html \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${BUILD_ID}'''
   }
 }
 
