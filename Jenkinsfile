@@ -128,6 +128,7 @@ def scanImages(RepositoryName, tag,NexusUrl, NexusRegistry, NexusUser, NexusPass
         env.NexusRegistry = "${NexusRegistry}"
         sh label: '', script: '''#!/usr/bin/env bash
                                  trivy image --format template --template "@html.tpl" -o report.html \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${BUILD_ID}'''
+  }
 }
 def pushImages(RepositoryName, tag,NexusUrl, NexusRegistry, NexusUser, NexusPassword) {
     stage('Pushing image') {
