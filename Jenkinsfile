@@ -60,9 +60,6 @@ sh "env"
 		       this.pushImages(RepositoryName, imageVersion,NexusUrl, NexusRegistry, NexusUser, NexusPassword)     
                         }                        
 
-                   stage('Remove created image') {
-                       this.runDocker("rmi -f ${RepositoryName}:${imageVersion}")
-                       }                                                         
                     }
                 }
             }     
@@ -102,7 +99,7 @@ def buildImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword
         def dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH_mm_ss")
         def date = new Date()
         def buildDate = (dateFormat.format(date)) 
-   sh("docker build  -t ${NexusUrl}:8081/${NexusRegistry}/${RepositoryName}:${imageVersion} .")
+   sh("docker build  -t ${NexusUrl}:8082/${NexusRegistry}/${RepositoryName}:${imageVersion} .")
 }
 
 def pushImages(RepositoryName, tag,NexusUrl, NexusRegistry, NexusUser, NexusPassword) {
@@ -117,7 +114,7 @@ def pushImages(RepositoryName, tag,NexusUrl, NexusRegistry, NexusUser, NexusPass
         sh label: '', script: '''#!/usr/bin/env bash
 set -x
                                  docker login -u \${NexusUser} -p \${NexusPassword} \${NexusUrl}
-                                 docker push \${NexusUrl}:8081/\${NexusRegistry}/\${RepositoryName}:\${tag}
-                                 docker rmi \${NexusUrl}:8081/\${NexusRegistry}/\${RepositoryName}:\${tag}'''
+                                 docker push \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${tag}
+                                 docker rmi \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${tag}'''
     }
 }
