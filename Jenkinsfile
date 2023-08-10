@@ -61,7 +61,7 @@ sh "env"
                         }
 
                    stage('Scan docker image') {
-                     sh "trivy image ${NexusUrl}:8082/${NexusRegistry}/${RepositoryName}:${BUILD_ID}"
+                     sh "trivy image ${NexusUrl}:8082/${NexusRegistry}/${RepositoryName}:${imageVersion}"
                         }
 
                    stage('Push docker image') {
@@ -114,10 +114,10 @@ def buildImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword
         def dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH_mm_ss")
         def date = new Date()
         def buildDate = (dateFormat.format(date)) 
-   sh("docker build  -t ${NexusUrl}:8082/${NexusRegistry}/${RepositoryName}:${BUILD_ID} .")
+   sh("docker build  -t ${NexusUrl}:8082/${NexusRegistry}/${RepositoryName}:${imageVersion} .")
 }
 
-def scanImages(RepositoryName, tag,NexusUrl, NexusRegistry, NexusUser, NexusPassword) {
+def scanImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword) {
     stage('Pushing image') {
         echo "Pushing ${RepositoryName}"
         env.RepositoryName = "${RepositoryName}"
@@ -127,7 +127,7 @@ def scanImages(RepositoryName, tag,NexusUrl, NexusRegistry, NexusUser, NexusPass
         env.NexusUrl = "${NexusUrl}"
         env.NexusRegistry = "${NexusRegistry}"
         sh label: '', script: '''#!/usr/bin/env bash
-                                 trivy image --format template --template "@html.tpl" -o report.html \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${BUILD_ID}'''
+                                 trivy image --format template --template "@html.tpl" -o report.html \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${imageVersion}'''
   }
 }
 def pushImages(RepositoryName, tag,NexusUrl, NexusRegistry, NexusUser, NexusPassword) {
@@ -142,7 +142,7 @@ def pushImages(RepositoryName, tag,NexusUrl, NexusRegistry, NexusUser, NexusPass
         sh label: '', script: '''#!/usr/bin/env bash
 set -x
                                  docker login -u \${NexusUser} -p \${NexusPassword} \${NexusUrl}:8082
-                                 docker push \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${BUILD_ID}
-                                 docker rmi \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${BUILD_ID}'''
+                                 docker push \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${imageVersion}
+                                 docker rmi \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${imageVersion}'''
     }
 }
