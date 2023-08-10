@@ -112,14 +112,15 @@ def buildImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword
 
 def scanImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword) {
     stage('scanning image') {
-        echo "Pushing ${RepositoryName}"
+        echo "Scanning ${RepositoryName}"
         env.RepositoryName = "${RepositoryName}"
         env.NexusUser = "${NexusUser}"
         env.NexusPassword = "${NexusPassword}"
         env.NexusUrl = "${NexusUrl}"
         env.NexusRegistry = "${NexusRegistry}"
         sh label: '', script: '''#!/usr/bin/env bash
-                                 docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image --format template --template "@html.tpl" -o report.html \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${BUILD_ID}'''
+                                 export DOCKER_HOST=unix:///Users/gauravkothiyal/.docker/run/docker.sock 
+                                 trivy image --format template --template "@html.tpl" -o report.html \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${BUILD_ID}'''
   }
 }
 
