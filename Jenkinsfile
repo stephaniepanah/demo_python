@@ -50,6 +50,10 @@ node ('macOS')  {
                        this.scanImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword)
                         }
 
+                   stage('Push docker image to nexus') {
+                       this.pushImages(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword)
+                        }
+
                    stage('SonarQube Analysis') {
                        def scannerHome = tool 'sonar';
                        withSonarQubeEnv('sonar') {
@@ -57,10 +61,6 @@ node ('macOS')  {
                           }
                         }
 
-                   stage('Push docker image to nexus') {
-		       this.pushImages(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword)     
-                        }                 
-       
                    stage('Publish reports') {
                        publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, includes: '**/*.html,**/*.css', keepAll: true, reportDir: 'output/app/flake-report/', reportFiles: 'index.html', reportName: 'Flake8 Report', reportTitles: '', useWrapperFileDirectly: true])
                        publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, includes: '**/*.html,**/*.css', keepAll: true, reportDir: 'output/app/htmlcov/', reportFiles: 'index.html', reportName: 'PyCOV Report', reportTitles: '', useWrapperFileDirectly: true])
@@ -111,7 +111,7 @@ def buildImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword
 }
 
 def scanImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword) {
-    stage('Pushing image') {
+    stage('scanning image') {
         echo "Pushing ${RepositoryName}"
         env.RepositoryName = "${RepositoryName}"
         env.NexusUser = "${NexusUser}"
@@ -119,9 +119,10 @@ def scanImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword)
         env.NexusUrl = "${NexusUrl}"
         env.NexusRegistry = "${NexusRegistry}"
         sh label: '', script: '''#!/usr/bin/env bash
-                                 trivy image --format template --template "@html.tpl" -o report.html \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${BUILD_ID}'''
+                                 docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image --format template --template "@html.tpl" -o report.html \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${BUILD_ID}'''
   }
 }
+
 def pushImages(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword) {
     stage('Pushing image') {
         echo "Pushing ${RepositoryName}"
