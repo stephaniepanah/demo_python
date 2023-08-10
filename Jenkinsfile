@@ -32,7 +32,7 @@ def matchingCredentials = credentials.findResult { it.id == "nexus-credentials" 
 def NexusUser = "${matchingCredentials.username}".toString()
 def NexusPassword = "${matchingCredentials.password}".toString()
 
-node  {
+node ('macOS')  {
     wrap([$class: 'BuildUser']) {
     	wrap([$class: 'MaskPasswordsBuildWrapper']) {
            wrap([$class: 'TimestamperBuildWrapper'] ) {
