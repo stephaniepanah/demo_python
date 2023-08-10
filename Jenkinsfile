@@ -113,7 +113,7 @@ def pushImages(RepositoryName, tag,NexusUrl, NexusRegistry, NexusUser, NexusPass
         env.NexusRegistry = "${NexusRegistry}"
         sh label: '', script: '''#!/usr/bin/env bash
 set -x
-                                 docker login -u \${NexusUser} -p \${NexusPassword} \${NexusUrl}
+                                 docker login -u \${NexusUser} -p \${NexusPassword} \${NexusUrl}:8082
                                  docker push \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${tag}
                                  docker rmi \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${tag}'''
     }
