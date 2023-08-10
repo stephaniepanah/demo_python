@@ -62,9 +62,7 @@ node ('macOS')  {
                         }
 
                    stage('Publish reports') {
-                       publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, includes: '**/*.html,**/*.css', keepAll: true, reportDir: 'output/app/flake-report/', reportFiles: 'index.html', reportName: 'Flake8 Report', reportTitles: '', useWrapperFileDirectly: true])
-                       publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, includes: '**/*.html,**/*.css', keepAll: true, reportDir: 'output/app/htmlcov/', reportFiles: 'index.html', reportName: 'PyCOV Report', reportTitles: '', useWrapperFileDirectly: true])
-                       publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, includes: 'report.html', keepAll: true, reportDir: '.', reportFiles: 'report.html', reportName: 'HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+                       publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, includes: '**/*.html,**/*.css', keepAll: true, reportDir: 'output/app/', reportFiles: 'index.html,report.html', reportName: 'Scan report', reportTitles: '', useWrapperFileDirectly: true])
 
 }
 
@@ -120,7 +118,7 @@ def scanImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword)
         env.NexusRegistry = "${NexusRegistry}"
         sh label: '', script: '''#!/usr/bin/env bash
                                  export DOCKER_HOST=unix:///Users/gauravkothiyal/.docker/run/docker.sock 
-                                 trivy image --format template --template "@html.tpl" -o report.html \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${BUILD_ID}'''
+                                 trivy image --format template --template "@html.tpl" -o output/app/report.html \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${BUILD_ID}'''
   }
 }
 
