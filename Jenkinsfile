@@ -66,7 +66,14 @@ sh "env"
 
                    stage('Push docker image') {
 		       this.pushImages(RepositoryName, imageVersion,NexusUrl, NexusRegistry, NexusUser, NexusPassword)     
-                        }                        
+                        }                 
+       
+                   stage('Publish reports') {
+                       publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, includes: '**/*.html,**/*.css', keepAll: true, reportDir: 'output/app/flake-report/', reportFiles: 'index.html', reportName: 'Flake8 Report', reportTitles: '', useWrapperFileDirectly: true])
+                       publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, includes: '**/*.html,**/*.css', keepAll: true, reportDir: 'output/app/htmlcov/', reportFiles: 'index.html', reportName: 'PyCOV Report', reportTitles: '', useWrapperFileDirectly: true])
+                       publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, includes: 'report.html', keepAll: true, reportDir: '.', reportFiles: 'report.html', reportName: 'HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+
+}
 
                     }
                 }
