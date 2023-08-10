@@ -50,15 +50,15 @@ node ('macOS')  {
                        this.scanImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword)
                         }
 
-                   stage('Push docker image to nexus') {
-                       this.pushImages(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword)
-                        }
-
                    stage('SonarQube Analysis') {
                        def scannerHome = tool 'sonar';
                        withSonarQubeEnv('sonar') {
                            sh "${scannerHome}/bin/sonar-scanner"
                           }
+                        }
+
+                   stage('Push docker image to nexus') {
+                       this.pushImages(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword)
                         }
 
                    stage('Publish reports') {
@@ -117,7 +117,7 @@ def scanImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword)
         env.NexusRegistry = "${NexusRegistry}"
         sh label: '', script: '''#!/usr/bin/env bash
                                  export DOCKER_HOST=unix:///Users/gauravkothiyal/.docker/run/docker.sock 
-                                 trivy image --format template --template "@html.tpl" -o report.html \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${BUILD_ID}'''
+                                 trivy image   --dependency-tree   -s MEDIUM,HIGH,CRITICAL  --ignore-unfixed --exit-code 0   --format template --template "@html.tpl" -o report.html \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${BUILD_ID}'''
 }
 
 def pushImages(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword) {
