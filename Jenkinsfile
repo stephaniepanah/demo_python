@@ -31,7 +31,8 @@ def NexusRegistry = "demo"
 def matchingCredentials = credentials.findResult { it.id == "nexus-credentials" ? it : null }
 def NexusUser = "${matchingCredentials.username}".toString()
 def NexusPassword = "${matchingCredentials.password}".toString()
-node  {
+
+node ('MacOS')  {
 docker.image('docker').inside {
     wrap([$class: 'BuildUser']) {
     	wrap([$class: 'MaskPasswordsBuildWrapper']) {
