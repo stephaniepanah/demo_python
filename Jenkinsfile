@@ -110,12 +110,11 @@ def buildImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword
         sh("docker build -t ${NexusUrl}:8082/${NexusRegistry}/${RepositoryName}:${BUILD_ID}    .")
 }
 
-def scanImage(RepositoryName, tag, NexusUrl, NexusRegistry, NexusUser, NexusPassword) {
+def scanImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword) {
     stage('Pushing image') {
         echo "Pushing ${RepositoryName}"
         env.RepositoryName = "${RepositoryName}"
         env.NexusUser = "${NexusUser}"
-        env.tag = "${tag}"
         env.NexusPassword = "${NexusPassword}"
         env.NexusUrl = "${NexusUrl}"
         env.NexusRegistry = "${NexusRegistry}"
@@ -123,12 +122,11 @@ def scanImage(RepositoryName, tag, NexusUrl, NexusRegistry, NexusUser, NexusPass
                                  trivy image --format template --template "@html.tpl" -o report.html \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${BUILD_ID}'''
   }
 }
-def pushImages(RepositoryName, tag,NexusUrl, NexusRegistry, NexusUser, NexusPassword) {
+def pushImages(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword) {
     stage('Pushing image') {
         echo "Pushing ${RepositoryName}"
         env.RepositoryName = "${RepositoryName}"
         env.NexusUser = "${NexusUser}"
-        env.tag = "${tag}"
         env.NexusPassword = "${NexusPassword}"
         env.NexusUrl = "${NexusUrl}"
         env.NexusRegistry = "${NexusRegistry}"
