@@ -109,7 +109,6 @@ def buildImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword
 }
 
 def scanImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword) {
-    stage('scanning image') {
         echo "Scanning ${RepositoryName}"
         env.RepositoryName = "${RepositoryName}"
         env.NexusUser = "${NexusUser}"
@@ -118,12 +117,10 @@ def scanImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword)
         env.NexusRegistry = "${NexusRegistry}"
         sh label: '', script: '''#!/usr/bin/env bash
                                  export DOCKER_HOST=unix:///Users/gauravkothiyal/.docker/run/docker.sock 
-                                 trivy image --format template --template "@html.tpl" report.html \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${BUILD_ID}'''
-  }
+                                 trivy image --format template --template "@html.tpl" -o report.html \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${BUILD_ID}'''
 }
 
 def pushImages(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword) {
-    stage('Pushing image') {
         echo "Pushing ${RepositoryName}"
         env.RepositoryName = "${RepositoryName}"
         env.NexusUser = "${NexusUser}"
@@ -136,4 +133,3 @@ set -x
                                  docker push \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${BUILD_ID}
                                  docker rmi \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${BUILD_ID}'''
     }
-}
