@@ -32,8 +32,7 @@ def matchingCredentials = credentials.findResult { it.id == "nexus-credentials" 
 def NexusUser = "${matchingCredentials.username}".toString()
 def NexusPassword = "${matchingCredentials.password}".toString()
 
-node ('MacOS')  {
-docker.image('docker').inside {
+node  {
     wrap([$class: 'BuildUser']) {
     	wrap([$class: 'MaskPasswordsBuildWrapper']) {
            wrap([$class: 'TimestamperBuildWrapper'] ) {
@@ -69,7 +68,6 @@ sh "env"
             }     
          }
     }
-}
 def removeAutodeleteImages() {
     this.runDocker('image prune -a -f --filter "label=autodelete=true"')
     echo 'removed autodelete images'
