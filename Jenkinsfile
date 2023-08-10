@@ -38,9 +38,6 @@ node ('macOS')  {
            wrap([$class: 'TimestamperBuildWrapper'] ) {
                wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
                   step([$class: 'WsCleanup'])
-                    stage('env') {
-sh "env"
-}
                    stage('Clone repositories') {
                          checkout scm
                        }
@@ -114,10 +111,11 @@ def buildImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword
         def dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH_mm_ss")
         def date = new Date()
         def buildDate = (dateFormat.format(date)) 
-   sh("docker build  -t ${NexusUrl}:8082/${NexusRegistry}/${RepositoryName}:${imageVersion} .")
+//   sh("docker build -t ${NexusUrl}:8082/${NexusRegistry}/${RepositoryName}:${imageVersion} .")
+        sh("docker build -t ${NexusUrl}:8082/${NexusRegistry}/${RepositoryName}:${imageVersion} .")
 }
 
-def scanImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword) {
+def scanImage(RepositoryName, tag, NexusUrl, NexusRegistry, NexusUser, NexusPassword) {
     stage('Pushing image') {
         echo "Pushing ${RepositoryName}"
         env.RepositoryName = "${RepositoryName}"
