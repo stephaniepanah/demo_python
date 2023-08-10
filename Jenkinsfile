@@ -52,8 +52,12 @@ sh "env"
                           }
                         }  
 
-                   stage('Build docker image') {
+                   stage('Build docker image and run tests') {
                        this.buildImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword)
+                        }
+
+                   stage('Scan docker image') {
+                     sh "trivy image ${NexusUrl}:8082/${NexusRegistry}/${RepositoryName}:${BUILD_ID}"
                         }
 
                    stage('Push docker image') {
@@ -101,6 +105,18 @@ def buildImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword
         def buildDate = (dateFormat.format(date)) 
    sh("docker build  -t ${NexusUrl}:8082/${NexusRegistry}/${RepositoryName}:${BUILD_ID} .")
 }
+
+def pushImages(RepositoryName, tag,NexusUrl, NexusRegistry, NexusUser, NexusPassword) {
+    stage('Pushing image') {
+        echo "Pushing ${RepositoryName}"
+        env.RepositoryName = "${RepositoryName}"
+        env.NexusUser = "${NexusUser}"
+        env.tag = "${tag}"
+        env.NexusPassword = "${NexusPassword}"
+        env.NexusUrl = "${NexusUrl}"
+        env.NexusRegistry = "${NexusRegistry}"
+        sh label: '', script: '''#!/usr/bin/env bash
+                                 trivy image \${NexusUrl}:8082/\${NexusRegistry}/\${RepositoryName}:\${BUILD_ID}'''
 
 def pushImages(RepositoryName, tag,NexusUrl, NexusRegistry, NexusUser, NexusPassword) {
     stage('Pushing image') {
