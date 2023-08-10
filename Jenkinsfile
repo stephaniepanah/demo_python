@@ -44,14 +44,14 @@ sh "env"
                    stage('Clone repositories') {
                          checkout scm
                        }
-/*
+
                    stage('SonarQube Analysis') {
                        def scannerHome = tool 'sonar';
                        withSonarQubeEnv('sonar') {
                            sh "${scannerHome}/bin/sonar-scanner"
                           }
                         }  
-*/
+
                    stage('Build docker image') {
                        this.buildImage(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword)
                         }
