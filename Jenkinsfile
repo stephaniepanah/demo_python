@@ -57,8 +57,8 @@ node ('macOS')  {
                           }
                         }
 
-                   stage('Push docker image') {
-		       this.pushImages(RepositoryName, imageVersion,NexusUrl, NexusRegistry, NexusUser, NexusPassword)     
+                   stage('Push docker image to nexus') {
+		       this.pushImages(RepositoryName, NexusUrl, NexusRegistry, NexusUser, NexusPassword)     
                         }                 
        
                    stage('Publish reports') {
