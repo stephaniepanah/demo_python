@@ -86,7 +86,6 @@ def withDockerCleanup(f) {
     }
 }
 
-
 def runDocker(command) {
     sh("sudo docker ${command}")
 }
