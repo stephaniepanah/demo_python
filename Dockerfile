@@ -13,3 +13,4 @@ RUN pytest --cov=. --cov-report html
 RUN flake8 --format=html --htmldir=flake-report || true
 
 CMD ["python3", "-m" , "flask", "run", "--host=0.0.0.0"]
+#CMD [ "sleep", "600" ]
